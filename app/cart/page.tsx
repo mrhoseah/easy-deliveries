@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
+  const router = useRouter();
   const [cartItems, setCartItems] = useState([
     { id: 1, name: 'Margherita Pizza', price: 1200, quantity: 1, image: '🍕' },
     { id: 2, name: 'Chicken Burger', price: 800, quantity: 2, image: '🍔' },
@@ -30,7 +32,11 @@ export default function CartPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
-          <button className="p-2 hover:bg-gray-200 rounded-full">
+          <button 
+            onClick={() => router.back()}
+            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+            aria-label="Go back"
+          >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
@@ -40,7 +46,13 @@ export default function CartPage() {
           <div className="text-center py-16">
             <ShoppingCart className="w-24 h-24 text-gray-300 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-gray-600 mb-2">Your cart is empty</h2>
-            <p className="text-gray-500">Add some delicious items to get started!</p>
+            <p className="text-gray-500 mb-6">Add some delicious items to get started!</p>
+            <button 
+              onClick={() => router.push('/')}
+              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+            >
+              Continue Shopping
+            </button>
           </div>
         ) : (
           <div className="space-y-6">

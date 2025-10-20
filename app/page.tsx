@@ -1,17 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Clock, Star, ChevronRight, Menu, X, MapPin, Search, Utensils, Zap, Heart, Share2 } from 'lucide-react';
+import { ShoppingBag, Clock, Star, ChevronRight, Menu, X, MapPin, Search, Zap, Heart, Share2 } from 'lucide-react';
 import Link from 'next/link'
 import { useDispatch, useSelector } from 'react-redux'
 import { type RootState, type AppDispatch } from './store'
 import { toggleLike } from './features/likesSlice'
 import { addItem } from './features/cartSlice'
+import Logo from '../components/Logo'
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
 
 export default function Page() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,12 +68,7 @@ export default function Page() {
       <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center transform hover:rotate-12 transition-transform duration-300">
-                <Utensils className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Easy Delivery</span>
-            </div>
+            <Logo size="md" />
 
             <div className="hidden md:flex items-center space-x-8">
               <a href="#" className="text-gray-700 hover:text-orange-600 transition-colors font-medium">Home</a>
@@ -196,21 +194,53 @@ export default function Page() {
 
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat.toLowerCase())}
-                className={`px-6 py-3 rounded-full font-semibold whitespace-nowrap transition-all duration-300 ${
-                  activeCategory === cat.toLowerCase()
-                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          {/* Search Input */}
+          <div className="mb-8">
+            <div className="relative max-w-md mx-auto">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search restaurants..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+            {searchTerm && (
+              <p className="text-center text-sm text-gray-500 mt-2">
+                {featuredRestaurants.filter(restaurant => {
+                  const matchesCategory = activeCategory === 'all' || 
+                    restaurant.cuisine.toLowerCase() === activeCategory;
+                  const matchesSearch = restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
+                  return matchesCategory && matchesSearch;
+                }).length} restaurants found
+              </p>
+            )}
           </div>
+
+          {/* Tabs */}
+          <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-gray-100">
+              {categories.map((cat) => (
+                <TabsTrigger 
+                  key={cat} 
+                  value={cat.toLowerCase()}
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white"
+                >
+                  {cat}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
       </section>
 
@@ -224,7 +254,34 @@ export default function Page() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredRestaurants.map((restaurant, idx) => (
+            {featuredRestaurants
+              .filter(restaurant => {
+                const matchesCategory = activeCategory === 'all' || 
+                  restaurant.cuisine.toLowerCase() === activeCategory;
+                const matchesSearch = searchTerm === '' || 
+                  restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+              })
+              .length === 0 ? (
+                <div className="col-span-full text-center py-16">
+                  <div className="text-6xl mb-4">🍽️</div>
+                  <h3 className="text-2xl font-semibold text-gray-600 mb-2">No restaurants found</h3>
+                  <p className="text-gray-500">
+                    {searchTerm ? `No results for "${searchTerm}"` : 'Try selecting a different category'}
+                  </p>
+                </div>
+              ) : (
+                featuredRestaurants
+                  .filter(restaurant => {
+                    const matchesCategory = activeCategory === 'all' || 
+                      restaurant.cuisine.toLowerCase() === activeCategory;
+                    const matchesSearch = searchTerm === '' || 
+                      restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                  })
+                  .map((restaurant, idx) => (
               <div key={idx} className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group cursor-pointer">
                 <div className="relative bg-gradient-to-br from-orange-100 to-red-100 h-48 flex items-center justify-center">
                   <div className="text-8xl group-hover:scale-110 transition-transform duration-300">
@@ -271,7 +328,8 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-            ))}
+                ))
+              )}
           </div>
         </div>
       </section>
@@ -321,12 +379,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-                  <Utensils className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">Easy Delivery</span>
-              </div>
+              <Logo size="sm" />
               <p className="text-gray-400">Delicious food delivered to your door in minutes.</p>
             </div>
             <div>
