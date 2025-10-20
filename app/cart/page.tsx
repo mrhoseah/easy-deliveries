@@ -1,32 +1,24 @@
 "use client";
 
-import { useState } from 'react';
 import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useSelector, useDispatch } from 'react-redux';
+import { type RootState, type AppDispatch } from '../store';
+import { updateQuantity, removeItem } from '../features/cartSlice';
 
 export default function CartPage() {
   const router = useRouter();
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Margherita Pizza', price: 1200, quantity: 1, image: '🍕' },
-    { id: 2, name: 'Chicken Burger', price: 800, quantity: 2, image: '🍔' },
-    { id: 3, name: 'Caesar Salad', price: 600, quantity: 1, image: '🥗' },
-  ]);
-
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + change) }
-          : item
-      ).filter(item => item.quantity > 0)
-    );
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
+  const dispatch = useDispatch<AppDispatch>();
+  const cartItems = useSelector((state: RootState) => state.cart.items || []);
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  const handleUpdateQuantity = (id: number, delta: number) => {
+    dispatch(updateQuantity({ id, delta }));
+  };
+
+  const handleRemoveItem = (id: number) => {
+    dispatch(removeItem(id));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,20 +58,20 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => updateQuantity(item.id, -1)}
+                      onClick={() => handleUpdateQuantity(item.id, -1)}
                       className="p-2 hover:bg-gray-100 rounded-full"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="w-8 text-center font-semibold">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity(item.id, 1)}
+                      onClick={() => handleUpdateQuantity(item.id, 1)}
                       className="p-2 hover:bg-gray-100 rounded-full"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => handleRemoveItem(item.id)}
                       className="p-2 hover:bg-red-100 text-red-600 rounded-full ml-4"
                     >
                       <Trash2 className="w-4 h-4" />

@@ -26,8 +26,11 @@ export default function Page() {
 
   const categories = ['All', 'International', 'Fast Food', 'Seafood', 'Traditional', 'Café', 'Local Cuisine', 'African'];
   const dispatch = useDispatch<AppDispatch>()
-  const likedIds = useSelector((s: RootState) => s.likes.likedIds)
-  const cartCount = useSelector((s: RootState) => s.cart.items.reduce((sum, i) => sum + i.quantity, 0))
+  const likedIds = useSelector((s: RootState) => s.likes?.likedIds || [])
+  const cartCount = useSelector((s: RootState) => {
+    const items = s.cart?.items || [];
+    return Array.isArray(items) ? items.reduce((sum, i) => sum + (i.quantity || 0), 0) : 0;
+  })
 
   const shareRestaurant = async (restaurant: { name: string; cuisine: string; rating: number }) => {
     const shareData = {
@@ -216,13 +219,13 @@ export default function Page() {
             </div>
             {searchTerm && (
               <p className="text-center text-sm text-gray-500 mt-2">
-                {featuredRestaurants.filter(restaurant => {
+                {Array.isArray(featuredRestaurants) ? featuredRestaurants.filter(restaurant => {
                   const matchesCategory = activeCategory === 'all' || 
                     restaurant.cuisine.toLowerCase() === activeCategory;
                   const matchesSearch = restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
                   return matchesCategory && matchesSearch;
-                }).length} restaurants found
+                }).length : 0} restaurants found
               </p>
             )}
           </div>
