@@ -1,8 +1,8 @@
-# Easy Deliveries 🍔
+# Easy Deliveries
 
 A modern, responsive food delivery application built with Next.js, featuring local restaurants and seamless ordering experience.
 
-## 🌟 Features
+## Features
 
 - **Restaurant Discovery**: Browse local restaurants with real-time filtering
 - **Smart Search**: Find restaurants by name or cuisine type
@@ -13,7 +13,7 @@ A modern, responsive food delivery application built with Next.js, featuring loc
 - **Responsive Design**: Works perfectly on all devices
 - **Modern UI**: Beautiful gradients and smooth animations
 
-## 🏪 Featured Restaurants
+## Featured Restaurants
 
 - **Cranes** - International cuisine
 - **Super Break** - Fast Food
@@ -24,11 +24,11 @@ A modern, responsive food delivery application built with Next.js, featuring loc
 - **Giffi Hotel** - Local Cuisine
 - **Pazuri Hotel** - African
 
-## 🚀 Live Demo
+## Live Demo
 
 **View it live: [https://ed-food-delivery.netlify.app/](https://ed-food-delivery.netlify.app/)**
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript
 - **Styling**: Tailwind CSS
@@ -37,7 +37,7 @@ A modern, responsive food delivery application built with Next.js, featuring loc
 - **Icons**: Lucide React
 - **Deployment**: Netlify
 
-## 📱 Getting Started
+## Getting Started
 
 ```bash
 # Install dependencies
@@ -50,17 +50,17 @@ npm run dev
 npm run build
 ```
 
-## 🎯 Key Features Implemented
+## Key Features Implemented
 
-- ✅ Redux store with cart and likes management
-- ✅ Working tabs with search functionality
-- ✅ Like/unlike restaurant functionality
-- ✅ Shopping cart with quantity controls
-- ✅ Share restaurant links
-- ✅ Responsive design
-- ✅ Custom logo integration
-- ✅ Navigation fixes (back button in cart)
+- Redux store with cart and likes management
+- Working tabs with search functionality
+- Like/unlike restaurant functionality
+- Shopping cart with quantity controls
+- Share restaurant links
+- Responsive design
+- Custom logo integration
+- Navigation fixes (back button in cart)
 
 ---
 
-*Built with ❤️ for easy food delivery*
+*Built with love for easy food delivery*
